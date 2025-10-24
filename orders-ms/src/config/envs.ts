@@ -10,7 +10,7 @@ interface EnvVars {
     
     DATABASE_URL: string;
 
-    NATS_SERVICES: string[],
+    NATS_SERVERS: string[],
 }
 
 const envsSchema = joi.object({
@@ -43,5 +43,5 @@ export const envs = {
 
     databaseUrl: envVars.DATABASE_URL,
 
-    natsServers: envVars.NATS_SERVICES
+    natsServers: envVars.NATS_SERVERS
 }
