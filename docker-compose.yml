@@ -8,6 +8,10 @@ services:
     ports:
       - "8222:8222"
 
+# ============================================================
+# Client Gateway
+# ============================================================
+
   client-gateway:
     build: ./client-gateway
     ports:
@@ -19,6 +23,10 @@ services:
       - PORT=3000
       - NATS_SERVERS=nats://nats-server:4222
 
+# ============================================================
+# Products Microservices
+# ============================================================
+
   products-ms:
     build: ./products-ms
     volumes:
@@ -28,6 +36,10 @@ services:
       - PORT=3001
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=file:./dev.db
+
+# ============================================================
+# Orders Microservices
+# ============================================================
 
   orders-ms:
     depends_on:
@@ -42,6 +54,11 @@ services:
       - NATS_SERVERS=nats://nats-server:4222
       - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public
 
+
+# ============================================================
+# Orders dabatase
+# ============================================================
+
   orders-db:
     container_name: orders_database
     image: postgres:16.2
@@ -55,3 +72,22 @@ services:
       - POSTGRES_PASSWORD=123456
       - POSTGRES_DB=ordersdb
     
+
+# ============================================================
+# Payments Microservices
+# ============================================================
+  
+  payments-ms:
+    container_name: payments-ms
+    build: ./payments-ms
+    volumes:
+      - ./payments-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    ports:
+      - ${PAYMENTS_MS_PORT}:${PAYMENTS_MS_PORT}
+    environment:
+      - PORT=${PAYMENTS_MS_PORT}
+      - NATS_SERVERS=nats://nats-server:4222
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCELLED_URL=${STRIPE_CANCELLED_URL}
