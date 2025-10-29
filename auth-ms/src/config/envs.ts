@@ -1,10 +1,10 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 import * as joi from 'joi';
 
 interface EnvVars {
     PORT: number;
-    
+
     DATABASE_URL: string;
 
     NATS_SERVERS: string[],

@@ -91,3 +91,36 @@ services:
       - STRIPE_SECRET=${STRIPE_SECRET}
       - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
       - STRIPE_CANCELLED_URL=${STRIPE_CANCELLED_URL}
+
+
+# ============================================================
+# Auth Microservices
+# ============================================================
+  
+  auth-ms:
+    build: ./auth-ms
+    depends_on:
+      - auth-db
+      - nats-server
+    volumes:
+      - ./auth-ms/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3004
+      - NATS_SERVERS=nats://nats-server:4222
+
+# ============================================================
+# Auth dabatase
+# ============================================================
+  auth-db:
+    container_name: auth_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./auth-ms/postgres:/var/lib/postgresql/data
+    # ports:
+    #   - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=authdb
